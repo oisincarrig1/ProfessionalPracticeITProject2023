@@ -7,10 +7,14 @@ const app = express();
 app.use(cors())
 app.use(bodyParser.json())
 
-app.use(cors({
-    origin: 'https://localhost:3000',
-
-  }));
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept'
+    );
+    next();
+  });
 
 app.post('/refresh', (req, res) => {
     const refreshToken = req.body.refreshToken
@@ -24,8 +28,8 @@ app.post('/refresh', (req, res) => {
     spotifyApi.refreshAccessToken().then(
         (data) => {
             res.json({
-                accessToken: data.body.accessToken,
-                expiresIn: data.body.expiresIn,
+                accessToken: data.body.access_token,
+                expiresIn: data.body.expires_in,
             })
 
         }).catch(() => {
